@@ -9,15 +9,8 @@ my $debug = '1';
 
 sub ProcessInterface
 {
-	my $in = `/sbin/ifconfig $_[0]|grep "RX bytes"|cut -d':' -f2|cut -d' ' -f1`;
-	my $out = `/sbin/ifconfig $_[0] | grep "TX bytes"|cut -d':' -f3|cut -d' ' -f1`;
-
-#my $inawk = q{"cat /proc/net/dev|grep $_[0]|awk '{print $2}'"};
-
-#	my $in = system("cat /proc/net/dev|grep $_[0]|cut -d' ' -f4");
-#	my $out = system("cat /proc/net/dev|grep $_[0]|cut -d' ' -f45");
-#print $in;
-#print $out;
+	my $in = `/sbin/ifconfig $_[0]|/bin/grep "RX bytes"|cut -d':' -f2|/usr/bin/cut -d' ' -f1`;
+	my $out = `/sbin/ifconfig $_[0] | /bin/grep "TX bytes"|cut -d':' -f3|/usr/bin/cut -d' ' -f1`;
 	chomp($in);
 	chomp($out);
 	if ($debug eq "1") { print "$_[0] -> in: $in out: $out\n"; }
