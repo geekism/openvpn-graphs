@@ -7,8 +7,8 @@ my $debug = '1';
 my $name = $ARGV[0];
 my $INVAL = $name."_IN";
 my $OUTVAL = $name."_OUT";
-my $in = `iptables -v -x -L $INVAL|grep -E "10"|cut -d' ' -f5`;
-my $out = `iptables -v -x -L $OUTVAL|grep -E "RETURN"|cut -d' ' -f5`;
+my $in = `/sbin/iptables -v -x -L $INVAL|/bin/grep -E "10"|/usr/bin/cut -d' ' -f5`;
+my $out = `/sbin/iptables -v -x -L $OUTVAL|/bin/grep -E "RETURN"|/usr/bin/cut -d' ' -f5`;
 
 &ProcessVPNInterface($name, $in, $out);
 sub ProcessVPNInterface
