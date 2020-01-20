@@ -24,19 +24,34 @@ print <<END
 	body { topMargin: 5; align: center; background: #fff; color: #000; font-family: Tahoma, Arial, Helvetica, Sans-Serif; font-size: 0.900em; font-color: #000; }
 	a { text-decoration: none; }
 	a:hover { text-decoration: underline bold; }
-	table { margin: auto; width: 70%; border-collapse: separate; border:solid white 1px; border-radius:9px; -moz-border-radius:9px; padding-left: 10px; padding-right: 10px; background: #242424; border: 1px solid #fff; white-space: pre-line; }
-	td.main { color: #fff; background: #242424; font-size: 0.900em; padding-top: 3px; padding-bottom: 3px; white-space: pre-line; }
-	td.main a { font-size: 0.900em; }
-	td.main a:hover { color: #fff; font-weight: bold; }
-	td { background: #242424; color: #fff; }
-	tr.main td { padding-top: 2px; padding-bottom: 2px; vertical-align: top; padding-left: 10px; padding-right: 10px; white-space: pre-line; }
-	pre { font-family: monospace; width: 100%; border: 1px dashed #454545; !important; }
-	p { text-align: center; }
-
+	img {
+		margin: auto;
+		border-collapse: separate; 
+		border:solid white 1px; 
+		border-radius:9px; 
+		-moz-border-radius:9px;
+		padding-left: 1px;
+		padding-right: 1px; 
+		background: #fff;
+		border: 0px solid #fff;
+		white-space: pre-line;
+		vertical-align: top;
+	}
   </style>
+  <script src="https://use.fontawesome.com/0c6b783fa5.js"></script>
+  <link href="https://bootswatch.com/4/cyborg/bootstrap.css" rel="stylesheet">
 </head>
+<center>
+	<a class="link" href="?trend=cpu">CPU </a><i class="fa fa-bar-chart fa-lg" aria-hidden="true"></i> -
+        <a class="link" href="?trend=mem">Mem </a><i class="fa fa-bar-chart fa-lg" aria-hidden="true"></i>
+END
+;
+foreach $graph (@graphs) { print "
+	- <a class=\"link\" href=\"?trend=$graph\">$graph </a><i class=\"fa fa-bar-chart fa-lg\" aria-hidden=\"true\"></i>
+"; }
 
-<a href="javascript:history.go(-1)"><span class='header'>$svrname $type $descr</span></a>
+print <<END
+<br><br><a href="/"><span class='header'>$svrname $type $descr</span></a>
 <br><br>
 END
 ;
@@ -44,11 +59,11 @@ END
 if ($name eq '') {
 	print "Daily Graphs (5 minute averages and maximums)";
 	print "<br>";
-		print "<a href='?trend=cpu'><img src='cpu-day.png' border='1'></a><br><br>\n";
-		print "<a href='?trend=mem'><img src='mem-day.png' border='1'></a><br><br>\n";
+		print "<a href='?trend=cpu'><img src='cpu-day.png' ></a><br><br>\n";
+		print "<a href='?trend=mem'><img src='mem-day.png' ></a><br><br>\n";
 	foreach $graph (@graphs)
 	{
-		print "<a href='?trend=$graph'><img src='$graph-day.png' border='1'></a><br><br>\n";
+		print "<a href='?trend=$graph'><img src='$graph-day.png' ></a><br><br>\n";
 		print "<br>";
 	}
 } elsif ($name eq 'vpn') {
@@ -103,6 +118,7 @@ END
 
 print <<END
 <br><br>
+</center>
 </body>
 </html>
 END
