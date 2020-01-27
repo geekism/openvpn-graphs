@@ -1,7 +1,7 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 use RRDs;
-my $rrd = '/srv/beyondhd.me/';
-my $img = '/srv/beyondhd.me/';
+my $rrd = './rrd/';
+my $img = './img/';
 my $rrdtool = '/usr/bin/rrdtool';
 my $debug = '1';
 &ProcessInterface("eth0", "network");
@@ -9,11 +9,15 @@ my $debug = '1';
 
 sub ProcessInterface
 {
-	my $in = `/sbin/ifconfig $_[0]|/bin/grep "RX bytes"|cut -d':' -f2|/usr/bin/cut -d' ' -f1`;
-	my $out = `/sbin/ifconfig $_[0] | /bin/grep "TX bytes"|cut -d':' -f3|/usr/bin/cut -d' ' -f1`;
+#	my $in = `/sbin/ifconfig $_[0]|/bin/grep "RX bytes"|/usr/bin/cut -d':' -f2|/usr/bin/cut -d' ' -f1`;
+#	my $out = `/sbin/ifconfig $_[0] | /bin/grep "TX bytes"|/usr/bin/cut -d':' -f3|/usr/bin/cut -d' ' -f1`;
+#	my $in = `/sbin/ifconfig $_[0] | /bin/grep -oP '(?<=RX bytes:)[0-9]*'`;
+#	my $out = `/sbin/ifconfig $_[0] | /bin/grep -oP '(?<=TX bytes:)[0-9]*'`;
+	my $in = `cat /sys/class/net/$_[0]/statistics/rx_bytes`;
+	my $out = `cat /sys/class/net/$_[0]/statistics/tx_bytes`;
 	chomp($in);
 	chomp($out);
-	if ($debug eq "1") { print "$_[0] -> in: $in out: $out\n"; }
+	if ($debug eq "1") { print "$_[0]\t-> in: $in out: $out\n"; }
 	if (! -e "$rrd/$_[0].rrd")
 	{
 		print "creating rrd database for $_[0] interface...\n";
@@ -102,7 +106,7 @@ if (! -e "$rrd/mem.rrd")
 
 `$rrdtool update $rrd/mem.rrd -t mem:buf:cache:swap N:$mem:$buffers:$cached:$swap`;
 
-if ($debug eq "1") { print "memory -> free: $mem buffers: $buffers cached: $cached swap: $swap\n"; }
+if ($debug eq "1") { print "memory\t-> free: $mem buffers: $buffers cached: $cached swap: $swap\n"; }
 
 &CreateGraphMemory("day");
 &CreateGraphMemory("week");
@@ -230,7 +234,6 @@ sub updatecpudata {
         $ERROR = RRDs::error;
         print "Error in RRD::update for cpu: $ERROR\n" if $ERROR;
 
-        if ($debug eq "1") {  print "cpu -> user: $user system: $system idle: $idle iowait: $io irq: $irq\n"; }
+        if ($debug eq "1") {  print "cpu\t-> user: $user system: $system idle: $idle iowait: $io irq: $irq\n"; }
 }
-
 

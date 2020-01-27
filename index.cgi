@@ -1,8 +1,11 @@
 #!/usr/bin/perl
 my @graphs;
 my ($name, $descr);
-push (@graphs, "eth0","tun0","vpn-black");
+push (@graphs, "eth0","tun0");
 my $svrname = $ENV{'SERVER_NAME'};
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+
+my $now = sprintf("%04d-%02d-%02d %02d:%02d:%02d", $mon+1, $mday, $year+1900, $hour, $min, $sec);
 
 my @values = split(/&/, $ENV{'QUERY_STRING'});
 foreach my $i (@values) {
@@ -17,7 +20,7 @@ print <<END
 <html>
 <head>
   <TITLE>$svrname network traffic :: $descr</TITLE>
-  <META HTTP-EQUIV="Refresh" CONTENT="600">
+  <META HTTP-EQUIV="Refresh" CONTENT="60">
   <META HTTP-EQUIV="Cache-Control" content="no-cache">
   <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
   <style>
@@ -59,67 +62,70 @@ END
 if ($name eq '') {
 	print "Daily Graphs (5 minute averages and maximums)";
 	print "<br>";
-		print "<a href='?trend=cpu'><img src='cpu-day.png' ></a><br><br>\n";
-		print "<a href='?trend=mem'><img src='mem-day.png' ></a><br><br>\n";
+		print "<a href='?trend=cpu'><img src='img/cpu-day.png' ></a><br><br>\n";
+		print "<a href='?trend=mem'><img src='img/mem-day.png' ></a><br><br>\n";
 	foreach $graph (@graphs)
 	{
-		print "<a href='?trend=$graph'><img src='$graph-day.png' ></a><br><br>\n";
+		print "<a href='?trend=$graph'><img src='img/$graph-day.png' ></a><br><br>\n";
 		print "<br>";
 	}
 } elsif ($name eq 'vpn') {
 print <<END
         Daily Graph (5 minute averages and maximums)<br>
-        <img src='$name-day.png'><br>
+        <img src='img/$name-day.png'><br>
         Weekly Graph (30 minute averages and maximums)<br>
-        <img src='$name-week.png'><br>
+        <img src='img/$name-week.png'><br>
         Monthly Graph (2 hour averages and maximums)<br>
-        <img src='$name-month.png'><br>
+        <img src='img/$name-month.png'><br>
         Yearly Graph (12 hour averages and maximums)<br>
-        <img src='$name-year.png'>
+        <img src='img/$name-year.png'>
 
 END
 } elsif ($name eq 'memory') {
 print <<END
         Daily Graph (5 minute averages and maximums)<br>
-        <img src='$name-day.png'><br>
+        <img src='img/$name-day.png'><br>
         Weekly Graph (30 minute averages and maximums)<br>
-        <img src='$name-week.png'><br>
+        <img src='img/$name-week.png'><br>
         Monthly Graph (2 hour averages and maximums)<br>
-        <img src='$name-month.png'><br>
+        <img src='img/$name-month.png'><br>
         Yearly Graph (12 hour averages and maximums)<br>
-        <img src='$name-year.png'>
+        <img src='img/$name-year.png'>
 END
 ;
 } elsif ($name eq 'cpu') {
 print <<END
 	Daily Graph (5 minute averages and maximums)<br>
-	<img src='$name-day.png'><br>
+	<img src='img/$name-day.png'><br>
 	Weekly Graph (30 minute averages and maximums)<br>
-	<img src='$name-week.png'><br>
+	<img src='img/$name-week.png'><br>
 	Monthly Graph (2 hour averages and maximums)<br>
-	<img src='$name-month.png'><br>
+	<img src='img/$name-month.png'><br>
 	Yearly Graph (12 hour averages and maximums)<br>
-	<img src='$name-year.png'>
+	<img src='img/$name-year.png'>
 END
 ;
 } else {
 print <<END
 	Daily Graph (5 minute averages and maximums)<br>
-	<img src='$name-day.png'><br>
+	<img src='img/$name-day.png'><br>
 	Weekly Graph (30 minute averages and maximums)<br>
-	<img src='$name-week.png'><br>
+	<img src='img/$name-week.png'><br>
 	Monthly Graph (2 hour averages and maximums)<br>
-	<img src='$name-month.png'><br>
+	<img src='img/$name-month.png'><br>
 	Yearly Graph (12 hour averages and maximums)<br>
-	<img src='$name-year.png'>
+	<img src='img/$name-year.png'>
 END
 ;
 }
 
+print "<br>".$now."<br>";
 print <<END
 <br><br>
+
 </center>
 </body>
 </html>
 END
 ;
+

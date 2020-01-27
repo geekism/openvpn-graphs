@@ -1,23 +1,21 @@
 #!/usr/bin/perl
 use RRDs;
-my $rrd = '/srv/beyondhd.me/';
-my $img = '/srv/beyondhd.me/';
+my $rrd = './rrd/';
+my $img = './img/';
 my $rrdtool = '/usr/bin/rrdtool';
 my $debug = '1';
 my $name = $ARGV[0];
-my $INVAL = $name."_IN";
-my $OUTVAL = $name."_OUT";
-#my $in = `/sbin/iptables -v -x -L $INVAL|/bin/grep -E "10"|/usr/bin/cut -d' ' -f5`;
-#my $out = `/sbin/iptables -v -x -L $OUTVAL|/bin/grep -E "RETURN"|/usr/bin/cut -d' ' -f5`;
-my $in = `/sbin/iptables -v -x -L $INVAL|/bin/grep -E "10.8.0"|/usr/bin/awk '{print \$2}'`;
-my $out = `/sbin/iptables -v -x -L $OUTVAL|/bin/grep -E "RETURN"|/usr/bin/awk '{print \$2}'`;
+my $IPTABLES_INCOMING = $name."_IN";
+my $IPTABLES_OUTGOING = $name."_OUT";
+my $TrafficIN = `/sbin/iptables -v -x -L FORWARD|grep $IPTABLES_INCOMING|/usr/bin/uniq|/usr/bin/awk '{print \$2}'`;
+my $TrafficOUT = `/sbin/iptables -v -x -L FORWARD|grep $IPTABLES_OUTGOING|/usr/bin/awk '{print \$2}'`;
 
-&ProcessVPNInterface($name, $in, $out);
+&ProcessVPNInterface($name, $TrafficIN, $TrafficOUT);
 sub ProcessVPNInterface
 {
-	chomp($in);
-	chomp($out);
-	if ($debug eq "1") { print "$_[0] -> in: $in out: $out\n"; }
+	chomp($TrafficIN);
+	chomp($TrafficOUT);
+	if ($debug eq "1") { print "$_[0] -> in: $TrafficIN out: $TrafficOUT\n"; }
 	if (! -e "$rrd/vpn-$_[0].rrd")
 	{
 		print "creating rrd database for $_[0] interface...\n";
@@ -37,7 +35,7 @@ sub ProcessVPNInterface
 	}
 	RRDs::update "$rrd/vpn-$_[0].rrd",
 		"-t", "in:out",
-		"N:$in:$out";
+		"N:$TrafficIN:$TrafficOUT";
 	if ($ERROR = RRDs::error) { print "$0: unable to insert data into $rrd/vpn-$_[0].rrd: $ERROR\n"; }
 	&CreateVPNGraph($_[0], "day", $_[1]);
 	&CreateVPNGraph($_[0], "week", $_[1]);
@@ -80,3 +78,4 @@ sub CreateVPNGraph
 		"HRULE:0#000000";
 	if ($ERROR = RRDs::error) { print "$0: unable to generate vpn-$_[0] graph: $ERROR\n"; }
 }
+
